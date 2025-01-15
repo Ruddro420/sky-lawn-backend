@@ -57,6 +57,7 @@ class RoomController extends Controller
 
 public function room_add(Request $request)
 {
+    dd('ojk');
     $data = $request->all();
      // Create the record
      try {

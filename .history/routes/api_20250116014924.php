@@ -15,7 +15,7 @@ Route::get('/room-category/delete/{id}', [RoomController::class, 'delete_categor
 
 //Room routing
 Route::get('/room/data',  [RoomController::class, 'room']); // Get all room 
-Route::post('/room/add', [RoomController::class, 'room_add']); // add room category
+Route::post('/room/add', [RoomController::class, 'add_room']); // add room category
 Route::get('/room/delete',  [RoomController::class, 'room_delete']); // Room delete
 
 

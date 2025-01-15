@@ -15,6 +15,36 @@ class RoomController extends Controller
         return response()->json($rooms);
     }
 
+    public function add_room(Request $request)
+    {
+        $data = $request->all();
+         // Create the record
+         try {
+            $room = Room::create($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Student record created successfully',
+                'data' => $student,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create student record',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+
+        $room = new Room();
+        $room->room_number = $request->room_number;
+        $room->room_name = $request->room_name;
+        $room->room_category_id  = $request->room_category_id;
+        $room->price   = $request->price;
+        $room->feature  = $request->feature;
+        $room->save();
+        return 'Room Added Done';
+    }
+
     //  Room category controlling 
 
     // Get all room categories
@@ -52,30 +82,5 @@ class RoomController extends Controller
         'message' => 'Category deleted successfully!',
     ], 200);
 }
-
-// add room
-
-public function room_add(Request $request)
-{
-    $data = $request->all();
-     // Create the record
-     try {
-        $room = Room::create($data);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Room created successfully',
-            'data' => $room,
-        ], 201);
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to create record',
-            'error' => $e->getMessage(),
-        ], 500);
-    }
-}
-
-
 
 }
