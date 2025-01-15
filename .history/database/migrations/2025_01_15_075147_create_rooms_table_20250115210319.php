@@ -16,9 +16,8 @@ return new class extends Migration
             $table->string('room_number'); // Room Number
             $table->string('room_name'); // Room name
             $table->foreignId('room_category_id') // Room Category relation
-                ->unsignedBigInteger() // Explicitly set the type
-                ->constrained('room_categories') // Relates to 'id' column in 'room_categories'
-                ->onDelete('cascade'); // Cascade delete on related records
+                  ->constrained('room_categories') // Relates to 'id' column in 'room_categories'
+                  ->onDelete('cascade'); // Cascade delete on related records
             $table->decimal('price', 10, 2); // Room price with precision
             $table->text('feature')->nullable(); // Room features, optional
             $table->timestamps(); // Created_at and Updated_at timestamps
