@@ -68,6 +68,16 @@ class RoomController extends Controller
         return response()->json($room);
     }
 
+    public function room_price($id) {
+        $room = Room::find($id);
+        $roomdata = [
+            'room_name' => $room->room_number,
+            'price' => $room->price
+        ];
+
+        return response()->json($roomdata);
+    }
+
 //---------------------------------------------------------------------
     //  Room category controlling 
 //---------------------------------------------------------------------
