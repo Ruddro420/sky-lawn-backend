@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PreBookingController;
+use App\Http\Controllers\UserRegisterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoomController;
@@ -8,9 +9,10 @@ use App\Http\Controllers\RoomController;
 //------------------------
 //User routing
 //------------------------
-Route::get('/user', [RoomController::class, 'category']); // user data
-Route::post('/user/add', [RoomController::class, 'add_category']); // add user
-Route::get('/user/delete/{id}', [RoomController::class, 'delete_category']); // delete user
+Route::get('/user', [UserRegisterController::class, 'user_data']); // user data
+Route::post('/user/add', [UserRegisterController::class, 'add_user']); // add user
+Route::get('/user/delete/{id}', [UserRegisterController::class, 'delete_user']); // delete user
+Route::post('/user/check', [UserRegisterController::class, 'checking_user']); // delete user
 
 
 //------------------------
