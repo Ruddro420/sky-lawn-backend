@@ -3,8 +3,10 @@
 use App\Http\Controllers\PreBookingController;
 use App\Http\Controllers\UserRegisterController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\API\BookingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoomController;
+use App\Models\PreBooking;
 
 //------------------------
 //User routing
@@ -38,5 +40,16 @@ Route::get('/room/room-number/price/{id}',  [RoomController::class, 'room_price'
 Route::get('/prebook-data', [PreBookingController::class, 'room_prebook']); // Get all prebook data
 Route::post('/prebook/add', [PreBookingController::class, 'prebook_add']);  // Add prebook data
 Route::delete('/prebook/delete/{id}', [PreBookingController::class, 'prebook_delete']); // Delete prebook data
+
+
+
+//------------------------
+//Booking routing
+//------------------------
+Route::get('/booking', [BookingController::class, 'room_booking']); // Get all booking data
+Route::post('/booking/add', [BookingController::class, 'booking_add']); // Add booking data
+Route::delete('/booking/delete/{id}', [BookingController::class, 'booking_delete']); // Delete booking data
+Route::get('/booking/edit/{id}', [BookingController::class, 'booking_edit']); // Edit booking data
+Route::put('/booking/update/{id}', [BookingController::class, 'booking_update']); // Update booking data
 
 

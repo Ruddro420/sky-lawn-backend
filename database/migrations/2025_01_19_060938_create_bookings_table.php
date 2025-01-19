@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
+            $table->string('user_id')->nullable();
             $table->string('name')->nullable();
             $table->string('mobile')->nullable();
             $table->string('fathers_name')->nullable();
@@ -28,6 +29,7 @@ return new class extends Migration
             $table->string('room_category')->nullable();
             $table->string('room_number')->nullable();
             $table->string('room_price')->nullable();
+            $table->string('person')->nullable();
             $table->string('duration_day')->nullable();
             $table->string('total_price')->nullable();
             $table->string('nid_no')->nullable();
@@ -38,8 +40,12 @@ return new class extends Migration
             $table->string('visa_no')->nullable();
             $table->string('visa_doc')->nullable();
             $table->string('other_doc')->nullable();
-            $table->string('status')->nullable();
-            $table->string('invoice_no')->nullable();
+            $table->string('advance')->nullable();
+            $table->string('payment_status')->nullable();
+            $table->string('payment_method')->nullable();
+            $table->string('check_status')->nullable()->default(0);
+            $table->string('status')->nullable()->default(0);
+            $table->string('invoice')->nullable();
             $table->timestamps();
         });
     }
