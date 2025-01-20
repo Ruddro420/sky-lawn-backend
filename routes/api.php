@@ -1,12 +1,12 @@
 <?php
+namespace App\Http\Controllers;
+
+use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\PreBookingController;
 use App\Http\Controllers\UserRegisterController;
-use Illuminate\Http\Request;
-use App\Http\Controllers\API\BookingController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoomController;
-use App\Models\PreBooking;
+use App\Http\Controllers\RoomBooking;
 
 //------------------------
 //User routing
@@ -42,14 +42,9 @@ Route::post('/prebook/add', [PreBookingController::class, 'prebook_add']);  // A
 Route::delete('/prebook/delete/{id}', [PreBookingController::class, 'prebook_delete']); // Delete prebook data
 
 
-
 //------------------------
 //Booking routing
 //------------------------
-Route::get('/booking', [BookingController::class, 'room_booking']); // Get all booking data
-Route::post('/booking/add', [BookingController::class, 'booking_add']); // Add booking data
-Route::delete('/booking/delete/{id}', [BookingController::class, 'booking_delete']); // Delete booking data
-Route::get('/booking/edit/{id}', [BookingController::class, 'booking_edit']); // Edit booking data
-Route::put('/booking/update/{id}', [BookingController::class, 'booking_update']); // Update booking data
-
-
+Route::get('/booking-data', [RoomBooking::class, 'room_booking']); // Get all booking data
+Route::post('/booking/add', [RoomBooking::class, 'booking_add']); // Add booking data
+Route::delete('/booking/delete/{id}', [RoomBooking::class, 'booking_delete']); // Delete booking data
