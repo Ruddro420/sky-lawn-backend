@@ -21,6 +21,7 @@ return new class extends Migration
                 ->onDelete('cascade'); // Cascade delete on related records
             $table->decimal('price', 10, 2); // Room price with precision
             $table->text('feature')->nullable(); // Room features, optional
+            $table->string('status')->default('available'); // Room status, default 'available'
             $table->timestamps(); // Created_at and Updated_at timestamps
         });
     }

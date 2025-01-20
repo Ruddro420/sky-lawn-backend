@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\PreBooking;
+use App\Models\Room;
 use Illuminate\Http\Request;
 
 class PreBookingController extends Controller
@@ -12,14 +14,34 @@ class PreBookingController extends Controller
         return response()->json($prebook);
     }
 
-   public function prebook_add(Request $request)
+    public function prebook_add(Request $request)
     {
         $data = $request->all();
-         // Create the record
-         try {
-            
+
+        if ($data) {
+            $room_number = $data['room_number'];
+
+            // Find the room by room number
+            $room_status = Room::where('room_number', $room_number)->first();
+
+            // Check if the room was found
+            if ($room_status) {
+                $room_status->status = 'pre-booking'; // Update the status
+                $room_status->save(); // Save the changes
+            } else {
+                // Handle the case where the room is not found
+                return response()->json(['error' => 'Room not found!']);
+            }
+        } else {
+            // Handle the case where $data is not provided
+            return response()->json(['error' => 'Invalid data provided!']);
+        }
+
+        // Create the record
+        try {
+
             $prebook = PreBooking::create($data);
-    
+
             return response()->json([
                 'success' => true,
                 'message' => 'Prebooking created successfully',

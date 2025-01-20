@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('pre_bookings', function (Blueprint $table) {
             $table->id();
-            $table->string('date_time');
-            $table->string('name');
-            $table->string('nationality');
+            $table->string('date_time')->nullable();
+            $table->string('name')->nullable();
+            $table->string('nationality')->nullable();
             $table->string('company')->nullable();
-            $table->string('phone');
-            $table->string('person');
-            $table->string('room_category');
-            $table->string('room_number');
-            $table->string('room_price');
-            $table->string('duration_day');
-            $table->string('booking_by');
+            $table->string('phone')->nullable();
+            $table->string('person')->nullable();
+            $table->string('room_category')->nullable();
+            $table->string('room_number')->nullable();
+            $table->string('room_price')->nullable();
+            $table->string('duration_day')->nullable();
+            $table->string('booking_by')->nullable();
             $table->timestamps();
         });
     }

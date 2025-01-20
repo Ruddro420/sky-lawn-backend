@@ -18,6 +18,7 @@ class Room extends Model
         'room_category_id',
         'price',
         'feature',
+        'status',
     ];
 
     // Define relationships

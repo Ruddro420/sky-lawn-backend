@@ -5,28 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\Room;
 use App\Models\RoomCategory;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class RoomController extends Controller
 {
-//---------------------------------------------------------------------
+    //---------------------------------------------------------------------
     //  Room  controlling 
-//---------------------------------------------------------------------
+    //---------------------------------------------------------------------
 
-        //get room
+    //get room
     public function rooms()
     {
         $rooms = Room::with('category')->get(); // Load Room with related Category
         return response()->json($rooms);
     }
 
-        //add room
+    //add room
     public function room_add(Request $request)
     {
         $data = $request->all();
-         // Create the record
-         try {
+        // Create the record
+        try {
             $room = Room::create($data);
-    
+
             return response()->json([
                 'success' => true,
                 'message' => 'Room created successfully',
@@ -41,7 +42,7 @@ class RoomController extends Controller
         }
     }
 
-        //delete room
+    //delete room
     public function room_delete($id)
     {
         // Find the room by ID
@@ -62,13 +63,15 @@ class RoomController extends Controller
         ], 200);
     }
 
-        //edit room
-    public function room_edit($id) {
+    //edit room
+    public function room_edit($id)
+    {
         $room = Room::find($id);
         return response()->json($room);
     }
 
-    public function room_price($id) {
+    public function room_price($id)
+    {
         $room = Room::find($id);
         $roomdata = [
             'room_name' => $room->room_number,
@@ -78,9 +81,25 @@ class RoomController extends Controller
         return response()->json($roomdata);
     }
 
-//---------------------------------------------------------------------
+    // Fetch all available rooms
+    public function available_room(): JsonResponse
+    {
+        $rooms = Room::where('status', 'available')->with('category')->get();
+        return response()->json($rooms, 200);
+    }
+
+    //Romm status update
+    public function status_update(Request $request)
+    {
+        $room = Room::find($request->id);
+        $room->status = $request->status;
+        $room->save();
+        return response()->json($room, 200);
+    }
+
+    //---------------------------------------------------------------------
     //  Room category controlling 
-//---------------------------------------------------------------------
+    //---------------------------------------------------------------------
 
     // Get all room categories
     public function category()
@@ -99,28 +118,22 @@ class RoomController extends Controller
     }
 
     public function delete_category($id)
-{
-    // Find the category by ID
-    $selected_category = RoomCategory::find($id);
+    {
+        // Find the category by ID
+        $selected_category = RoomCategory::find($id);
 
-    // Check if the category exists
-    if (!$selected_category) {
+        // Check if the category exists
+        if (!$selected_category) {
+            return response()->json([
+                'message' => 'Category not found!',
+            ], 404);
+        }
+
+        // Delete the category
+        $selected_category->delete();
+
         return response()->json([
-            'message' => 'Category not found!',
-        ], 404);
+            'message' => 'Category deleted successfully!',
+        ], 200);
     }
-
-    // Delete the category
-    $selected_category->delete();
-
-    return response()->json([
-        'message' => 'Category deleted successfully!',
-    ], 200);
-}
-
-
-
-
-
-
 }

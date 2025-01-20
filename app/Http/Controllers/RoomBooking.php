@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use App\Models\Room;
 
 class RoomBooking extends Controller
 {
@@ -19,6 +20,28 @@ class RoomBooking extends Controller
 
     public function booking_add(Request $request)
     {
+
+        //booking status change
+        $data = $request->all();
+        if ($data) {
+            $room_number = $data['room_number'];
+
+            // Find the room by room number
+            $room_status = Room::where('room_number', $room_number)->first();
+
+            // Check if the room was found
+            if ($room_status) {
+                $room_status->status = 'booking'; // Update the status
+                $room_status->save(); // Save the changes
+            } else {
+                // Handle the case where the room is not found
+                return response()->json(['error' => 'Room not found!']);
+            }
+        } else {
+            // Handle the case where $data is not provided
+            return response()->json(['error' => 'Invalid data provided!']);
+        }
+
         // Validate the request
         $validated = $request->validate([
             'user_id' => 'nullable|string',
@@ -96,5 +119,22 @@ class RoomBooking extends Controller
             ], 404);
         }
     }
+
+    // public function find_id($id)
+    // {
+    //     $booking = Booking::find($id);
+    //     if ($booking) {
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'message' => 'Booking found',
+    //             'data' => $booking
+    //         ]);
+    //     } else {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Booking not found'
+    //         ], 404);
+    //     }
+    // }
     
 }

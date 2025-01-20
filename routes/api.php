@@ -7,6 +7,7 @@ use App\Http\Controllers\PreBookingController;
 use App\Http\Controllers\UserRegisterController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomBooking;
+use App\Http\Controllers\SuportController;
 
 //------------------------
 //User routing
@@ -33,6 +34,8 @@ Route::post('/room/add', [RoomController::class, 'room_add']); // add room categ
 Route::get('/room/edit/{id}',  [RoomController::class, 'room_edit']); // Room delete (done)
 Route::get('/room/delete/{id}',  [RoomController::class, 'room_delete']); // Room delete (done)
 Route::get('/room/room-number/price/{id}',  [RoomController::class, 'room_price']); // Room delete (done)
+Route::get('/room/available-room',  [RoomController::class, 'available_room']); // Room available (done)
+Route::post('/room/update/status',  [RoomController::class, 'status_update']); // Room update
 
 //------------------------
 //Prebooking routing
@@ -48,3 +51,11 @@ Route::delete('/prebook/delete/{id}', [PreBookingController::class, 'prebook_del
 Route::get('/booking-data', [RoomBooking::class, 'room_booking']); // Get all booking data
 Route::post('/booking/add', [RoomBooking::class, 'booking_add']); // Add booking data
 Route::delete('/booking/delete/{id}', [RoomBooking::class, 'booking_delete']); // Delete booking data
+
+
+//------------------------
+//suport routing 
+//------------------------
+Route::get('/suport-data', [SuportController::class, 'suport']); // Get all suport data
+Route::post('/suport/add', [SuportController::class, 'suport_add']); // Add suport data
+Route::delete('/suport/delete/{id}', [SuportController::class, 'suport_delete']); // Delete suport data
