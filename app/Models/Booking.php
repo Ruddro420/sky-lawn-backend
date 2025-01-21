@@ -11,11 +11,11 @@ class Booking extends Model
         'checking_date_time', 'checkout_date_time', 'room_category', 'room_number', 
         'room_price', 'person', 'duration_day', 'total_price', 'nid_no', 'passport_no', 
         'visa_no', 'advance', 'payment_status', 'payment_method', 'check_status', 'status',
-        'nid_doc', 'couple_doc', 'passport_doc', 'visa_doc', 'other_doc'
+        'nid_doc', 'couple_doc', 'passport_doc', 'visa_doc', 'other_doc', 'nid_doc'
     ];
 
     protected $casts = [
-        'nid_doc' => 'array',        // Ensuring the JSON fields are treated as arrays
+        // 'nid_doc' => 'array',        // Ensuring the JSON fields are treated as arrays
         'couple_doc' => 'array',
         'passport_doc' => 'array',
         'visa_doc' => 'array',

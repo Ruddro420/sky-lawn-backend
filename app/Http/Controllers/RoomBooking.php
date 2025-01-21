@@ -22,35 +22,11 @@ class RoomBooking extends Controller
 
     public function booking_add(Request $request)
     {
+        // Generate random user ID and invoice
         $data = $request->all();
-        $data['user_id'] = Str::random(10);  // Generate random user ID
-        $data['invoice'] = Str::random(10);  // Generate random invoice number
-
-        // Update room status if room_number is provided
-        if (isset($data['room_number'])) {
-            $room_number = $data['room_number'];
-            $room_status = Room::where('room_number', $room_number)->first();
-            $prebooking_status = PreBooking::where('room_number', $room_number)->first();
-
-            // Update prebooking status
-            if ($prebooking_status) {
-                $prebooking_status->status = '1';
-                $prebooking_status->save();
-            } else {
-                return response()->json(['error' => 'Prebooking not found!'], 404);
-            }
-
-            // Update room status
-            if ($room_status) {
-                $room_status->status = 'booking';
-                $room_status->save();
-            } else {
-                return response()->json(['error' => 'Room not found!'], 404);
-            }
-        } else {
-            return response()->json(['error' => 'Invalid data provided!'], 400);
-        }
-
+        $data['user_id'] = Str::random(10); // Generate random user ID
+        $data['invoice'] = Str::random(10); // Generate random invoice number
+    
         // Validate incoming request
         $validated = $request->validate([
             'name' => 'nullable|string',
@@ -79,38 +55,64 @@ class RoomBooking extends Controller
             'payment_method' => 'nullable|string',
             'check_status' => 'nullable|string',
             'status' => 'nullable|string',
-            '_doc.*' => 'nullable|file|mimes:jpg,png,pdf|max:2048', // Multiple file upload
+            'nid_doc.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048', // Multiple file validation
         ]);
-
-        // Handle document uploads
-        $files = [];
-        $fileFields = ['nid_doc', 'couple_doc', 'passport_doc', 'visa_doc', 'other_doc'];
-
-        foreach ($fileFields as $field) {
-            if ($request->hasFile($field)) {
-                $filePaths = [];
-                foreach ($request->file($field) as $file) {
-                    // Store each file and add its path to the array
-                    $filePaths[] = $file->store('documents');
-                }
-                // Store the file paths as a JSON string
-                $files[$field] = json_encode($filePaths);
+    
+        // Handle room and prebooking status
+        if (!empty($validated['room_number'])) {
+            $room_number = $validated['room_number'];
+            $room_status = Room::where('room_number', $room_number)->first();
+            $prebooking_status = PreBooking::where('room_number', $room_number)->first();
+    
+            if ($prebooking_status) {
+                $prebooking_status->status = '1'; // Mark prebooking as completed
+                $prebooking_status->save();
+            } else {
+                return response()->json(['error' => 'Prebooking not found!'], 404);
             }
+    
+            if ($room_status) {
+                $room_status->status = 'booking'; // Update room status to "booking"
+                $room_status->save();
+            } else {
+                return response()->json(['error' => 'Room not found!'], 404);
+            }
+        } else {
+            return response()->json(['error' => 'Room number is required!'], 400);
         }
-
-        // Merge uploaded files into the validated data
-        $validated = array_merge($validated, $files);
-        
-        // Add user_id and invoice to validated data
+    
+        // Handle document uploads
+        if ($request->hasFile('nid_doc')) {
+            $files = $request->file('nid_doc');
+            $filenames = [];
+    
+            foreach ($files as $file) {
+                $filename = date('Ymdhi') . '_' . $file->getClientOriginalName();
+                $file->move(public_path('nid/doc'), $filename); // Save files to 'public/nid/doc' directory
+                $filenames[] = $filename;
+            }
+    
+            // Store filenames as JSON string in the database
+            $data['nid_doc'] = json_encode($filenames);
+        }
+    
+        // Add user_id and invoice to the validated data
         $validated['user_id'] = $data['user_id'];
         $validated['invoice'] = $data['invoice'];
-
+    
+        if (isset($data['nid_doc'])) {
+            $validated['nid_doc'] = $data['nid_doc'];
+        }
+    
         // Create the booking record
-        $booking = Booking::create($validated);
-
-        // Return the created booking
-        return response()->json($booking, 201);
+        try {
+            $booking = Booking::create($validated);
+            return response()->json($booking, 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to create booking', 'message' => $e->getMessage()], 500);
+        }
     }
+    
     
     
 
