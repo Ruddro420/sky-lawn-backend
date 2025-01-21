@@ -75,4 +75,19 @@ class PreBookingController extends Controller
             'message' => 'Prebooking deleted successfully',
         ]);
     }
+
+    public function prebook_data($id)
+    {
+        // Find the room by ID
+        $selected_prebook = PreBooking::find($id);
+
+        // Check if the room exists
+        if (!$selected_prebook) {
+            return response()->json([
+                'message' => 'Prebooking not found!',
+            ], 404);
+        }
+
+        return response()->json($selected_prebook);
+    }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\UserRegisterController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomBooking;
 use App\Http\Controllers\SuportController;
+use App\Http\Controllers\ReportController;
 
 //------------------------
 //User routing
@@ -43,6 +44,7 @@ Route::post('/room/update/status',  [RoomController::class, 'status_update']); /
 Route::get('/prebook-data', [PreBookingController::class, 'room_prebook']); // Get all prebook data
 Route::post('/prebook/add', [PreBookingController::class, 'prebook_add']);  // Add prebook data
 Route::delete('/prebook/delete/{id}', [PreBookingController::class, 'prebook_delete']); // Delete prebook data
+Route::get('/prebook-data/show/{id}', [PreBookingController::class, 'prebook_data']); // Get all prebook data
 
 
 //------------------------
@@ -50,7 +52,7 @@ Route::delete('/prebook/delete/{id}', [PreBookingController::class, 'prebook_del
 //------------------------
 Route::get('/booking-data', [RoomBooking::class, 'room_booking']); // Get all booking data
 Route::post('/booking/add', [RoomBooking::class, 'booking_add']); // Add booking data
-Route::delete('/booking/delete/{id}', [RoomBooking::class, 'booking_delete']); // Delete booking data
+Route::get('/booking/delete/{id}', [RoomBooking::class, 'booking_delete']); // Delete booking data
 
 
 //------------------------
@@ -58,4 +60,15 @@ Route::delete('/booking/delete/{id}', [RoomBooking::class, 'booking_delete']); /
 //------------------------
 Route::get('/suport-data', [SuportController::class, 'suport']); // Get all suport data
 Route::post('/suport/add', [SuportController::class, 'suport_add']); // Add suport data
-Route::delete('/suport/delete/{id}', [SuportController::class, 'suport_delete']); // Delete suport data
+Route::get('/suport/delete/{id}', [SuportController::class, 'suport_delete']); // Delete suport data
+
+
+
+//------------------------
+//Report routing 
+//------------------------
+Route::get('/booking/report/weekly', [ReportController::class, 'weekly_booking']); // Get all report data
+Route::get('/booking/report/monthly', [ReportController::class, 'monthly_booking']); // Get all report data
+
+Route::get('/pre-booking/report/weekly', [ReportController::class, 'weekly_pre_booking']); // Get all report data
+Route::get('/pre-booking/report/monthly', [ReportController::class, 'monthly_monthly_booking']); // Get all report data
