@@ -43,8 +43,8 @@ return new class extends Migration
             $table->string('advance')->nullable();
             $table->string('payment_status')->nullable();
             $table->string('payment_method')->nullable();
-            $table->string('check_status')->nullable()->default(0);
-            $table->string('status')->nullable()->default(0);
+            $table->string('check_status')->nullable()->default(1);
+            $table->string('status')->nullable()->default(1);
             $table->string('invoice')->nullable();
             $table->timestamps();
         });

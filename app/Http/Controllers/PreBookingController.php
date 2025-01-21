@@ -5,13 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\PreBooking;
 use App\Models\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PreBookingController extends Controller
 {
     public function room_prebook()
     {
         $prebook = PreBooking::all();
-        return response()->json($prebook);
+       return response()->json([
+            'status' => 'success',
+            'message' => 'Prebooking data',
+            'data' => $prebook
+        ]);
+        
     }
 
     public function prebook_add(Request $request)
@@ -41,7 +47,6 @@ class PreBookingController extends Controller
         try {
 
             $prebook = PreBooking::create($data);
-
             return response()->json([
                 'success' => true,
                 'message' => 'Prebooking created successfully',
