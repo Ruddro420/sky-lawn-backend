@@ -119,10 +119,11 @@ class ReportController extends Controller
     
         $startDate = Carbon::parse($request->start_date)->startOfDay();
         $endDate = Carbon::parse($request->end_date)->endOfDay();
+        $bookReport = $request->booking;
     
-        if ($request->pre_booking) {
+        if ($bookReport == 'pre_booking') {
             // Query PreBooking records
-            $dateRangeReport = PreBooking::whereBetween('created_at', [$startDate, $endDate])->where('status', 0)->get();
+            $dateRangeReport = PreBooking::whereBetween('date_time', [$startDate, $endDate])->where('status', 0)->get();
     
             $preBookingCount = $dateRangeReport->count();
             $totalPrice = $dateRangeReport->sum('room_price');
@@ -134,9 +135,9 @@ class ReportController extends Controller
                 'total_price' => $totalPrice,
                 'data' => $dateRangeReport,
             ]);
-        } elseif ($request->booking) {
+        } elseif ($bookReport == 'booking') {
             // Query Booking records
-            $dateRangeReport = Booking::whereBetween('created_at', [$startDate, $endDate])->get();
+            $dateRangeReport = Booking::whereBetween('checking_date_time', [$startDate, $endDate])->get();
     
             $bookingCount = $dateRangeReport->count();
             $totalPrice = $dateRangeReport->sum('room_price');

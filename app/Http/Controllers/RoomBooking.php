@@ -112,6 +112,24 @@ class RoomBooking extends Controller
             return response()->json(['error' => 'Failed to create booking', 'message' => $e->getMessage()], 500);
         }
     }
+
+
+    public function booking_data($id)
+    {
+        $booking = Booking::find($id);
+        if ($booking) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Booking found',
+                'data' => $booking
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Booking not found'
+            ], 404);
+        }
+    }
     
     
     
