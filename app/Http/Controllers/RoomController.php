@@ -73,17 +73,40 @@ class RoomController extends Controller
     //room update 
     public function room_update(Request $request)
     {
+        // Find the room by ID
         $room = Room::find($request->id);
-        $room->room_number = $request->room_number;
-        $room->room_name = $request->room_name;
-        $room->room_category_id = $request->room_category_id;
-        $room->price = $request->price;
-        $room->feature = $request->feature;
-        $room->status = $request->status;
+    
+        // Ensure the room exists
+        if (!$room) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Room not found.',
+            ], 404);
+        }
+    
+        // Update only the fields present in the request
+        $room->fill($request->only([
+            'room_number',
+            'room_name',
+            'room_category_id',
+            'price',
+            'feature',
+            'status'
+        ]));
+    
+        // Save the changes
         $room->save();
-        return response()->json($room, 200);
+    
+        // Return a JSON response with the updated room
+        return response()->json([
+            'success' => true,
+            'message' => 'Room updated successfully.',
+            'data' => $room,
+        ], 200);
     }
-
+    
+    
+    
     public function room_price($id)
     {
         $room = Room::find($id);
