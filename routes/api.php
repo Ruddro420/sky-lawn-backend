@@ -36,7 +36,9 @@ Route::get('/room/edit/{id}',  [RoomController::class, 'room_edit']); // Room de
 Route::get('/room/delete/{id}',  [RoomController::class, 'room_delete']); // Room delete (done)
 Route::get('/room/room-number/price/{id}',  [RoomController::class, 'room_price']); // Room delete (done)
 Route::get('/room/available-room',  [RoomController::class, 'available_room']); // Room available (done)
-Route::post('/room/update/status',  [RoomController::class, 'status_update']); // Room update
+Route::post('/room/update/status',  [RoomController::class, 'status_update']); // Room update status
+Route::post('/room/update',  [RoomController::class, 'room_update']); // Room update 
+
 
 //------------------------
 //Prebooking routing

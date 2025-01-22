@@ -70,6 +70,20 @@ class RoomController extends Controller
         return response()->json($room);
     }
 
+    //room update 
+    public function room_update(Request $request)
+    {
+        $room = Room::find($request->id);
+        $room->room_number = $request->room_number;
+        $room->room_name = $request->room_name;
+        $room->room_category_id = $request->room_category_id;
+        $room->price = $request->price;
+        $room->feature = $request->feature;
+        $room->status = $request->status;
+        $room->save();
+        return response()->json($room, 200);
+    }
+
     public function room_price($id)
     {
         $room = Room::find($id);
@@ -111,6 +125,9 @@ class RoomController extends Controller
     // add category
     public function add_category(Request $request)
     {
+        $request->validate([
+            'name' => 'required|unique:room_categories,name',
+        ]);
         $data = new RoomCategory();
         $data->name = $request->name;
         $data->save();
@@ -136,4 +153,6 @@ class RoomController extends Controller
             'message' => 'Category deleted successfully!',
         ], 200);
     }
+
+
 }
