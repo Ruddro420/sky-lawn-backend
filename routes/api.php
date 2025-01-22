@@ -74,3 +74,5 @@ Route::get('/booking/report/monthly', [ReportController::class, 'monthly_booking
 
 Route::get('/pre-booking/report/weekly', [ReportController::class, 'weekly_pre_booking']); // Get all report data
 Route::get('/pre-booking/report/monthly', [ReportController::class, 'monthly_monthly_booking']); // Get all report data
+
+Route::post('/date/range/report', [ReportController::class, 'date_range_report']); // Get all report data

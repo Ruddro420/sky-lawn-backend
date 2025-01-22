@@ -116,37 +116,46 @@ class ReportController extends Controller
     // data range report
     public function date_range_report(Request $request)
     {
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
-
-        if($request->pre_booking){
-            $dateRangeReport = PreBooking::whereBetween('created_at', [$startDate, $endDate]);
+    
+        $startDate = Carbon::parse($request->start_date)->startOfDay();
+        $endDate = Carbon::parse($request->end_date)->endOfDay();
+    
+        if ($request->pre_booking) {
+            // Query PreBooking records
+            $dateRangeReport = PreBooking::whereBetween('created_at', [$startDate, $endDate])->where('status', 0)->get();
+    
             $preBookingCount = $dateRangeReport->count();
             $totalPrice = $dateRangeReport->sum('room_price');
-
+    
             return response()->json([
                 'success' => true,
-                'message' => 'Date range report retrieved successfully.',
+                'message' => 'Pre-booking date range report retrieved successfully.',
                 'count' => $preBookingCount,
                 'total_price' => $totalPrice,
                 'data' => $dateRangeReport,
             ]);
-
-        }elseif($request->booking){
-            $dateRangeReport = Booking::whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($request->booking) {
+            // Query Booking records
+            $dateRangeReport = Booking::whereBetween('created_at', [$startDate, $endDate])->get();
+    
             $bookingCount = $dateRangeReport->count();
             $totalPrice = $dateRangeReport->sum('room_price');
-
+    
             return response()->json([
                 'success' => true,
-                'message' => 'Date range report retrieved successfully.',
+                'message' => 'Booking date range report retrieved successfully.',
                 'count' => $bookingCount,
                 'total_price' => $totalPrice,
                 'data' => $dateRangeReport,
             ]);
-
+        } else {
+            // No valid type specified
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid request. Please specify either pre_booking or booking as true.',
+            ], 400);
         }
-    
     }
+    
     
 }
