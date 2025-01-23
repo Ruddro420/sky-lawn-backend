@@ -9,6 +9,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomBooking;
 use App\Http\Controllers\SuportController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\InvoiceController;
 
 //------------------------
 //User routing
@@ -77,3 +78,13 @@ Route::get('/pre-booking/report/weekly', [ReportController::class, 'weekly_pre_b
 Route::get('/pre-booking/report/monthly', [ReportController::class, 'monthly_monthly_booking']); // Get all report data
 
 Route::post('/date/range/report', [ReportController::class, 'date_range_report']); // Get all report data
+
+
+
+
+//------------------------
+//Invoice routing
+//------------------------
+Route::get('/invoice', [InvoiceController::class, 'invoice']); // Get all invoice data
+Route::post('/invoice/add', [InvoiceController::class, 'invoice_add']); // Add invoice data
+Route::get('/invoice/delete/{id}', [InvoiceController::class, 'invoice_delete']); // Delete invoice data
