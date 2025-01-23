@@ -63,23 +63,39 @@ class PreBookingController extends Controller
 
     public function prebook_delete($id)
     {
-        // Find the room by ID
-        $selected_prebook = PreBooking::find($id);
-
-        // Check if the room exists
-        if (!$selected_prebook) {
+        // Find the prebooking by ID
+        $selectedPrebook = PreBooking::find($id);
+    
+        // Check if the prebooking exists
+        if (!$selectedPrebook) {
             return response()->json([
                 'message' => 'Prebooking not found!',
             ], 404);
         }
-
-        // Delete the room
-        $selected_prebook->delete();
-
+    
+        // Find the room by room number
+        $roomNumber = $selectedPrebook->room_number;
+        $room = Room::where('room_number', $roomNumber)->first();
+    
+        if ($room) {
+            // Update room status to 'available' if the room exists
+            $room->status = 'available';
+            $room->save();
+        } else {
+            // If the room is not found, return an error response or log the issue
+            return response()->json([
+                'message' => 'Room not found for the prebooking!',
+            ], 404);
+        }
+    
+        // Delete the prebooking
+        $selectedPrebook->delete();
+    
         return response()->json([
-            'message' => 'Prebooking deleted successfully',
+            'message' => 'Prebooking deleted successfully and room status updated to available.',
         ]);
     }
+    
 
     public function prebook_data($id)
     {
