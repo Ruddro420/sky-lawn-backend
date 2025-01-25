@@ -121,7 +121,11 @@ class RoomController extends Controller
     // Fetch all available rooms
     public function available_room(): JsonResponse
     {
-        $rooms = Room::where('status', 'available')->with('category')->get();
+        $rooms = Room::where(function ($query) {
+            $query->where('status', 'available')
+                  ->orWhere('status', 'pre-booking');
+        })->with('category')->get();
+        
         return response()->json($rooms, 200);
     }
 
