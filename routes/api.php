@@ -57,6 +57,7 @@ Route::get('/booking-data', [RoomBooking::class, 'room_booking']); // Get all bo
 Route::post('/booking/add', [RoomBooking::class, 'booking_add']); // Add booking data
 Route::get('/booking/delete/{id}', [RoomBooking::class, 'booking_delete']); // Delete booking data
 Route::get('/booking-data/show/{id}', [RoomBooking::class, 'booking_data']); // Get all booking data
+Route::post('/book/checkout/update', [RoomBooking::class, 'checkout_update']); // Get all booking data
 
 
 //------------------------

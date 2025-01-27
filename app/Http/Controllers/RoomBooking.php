@@ -77,7 +77,7 @@ class RoomBooking extends Controller
         ]);
     
         $room_status = Room::where('room_number', $room_number)->first();
-        $prebooking_status = PreBooking::where('room_number', $room_number)->first();
+        $prebooking_status = PreBooking::where('room_number', $room_number)->whereDate('date_time', $checking_date )->first();
     
         if ($prebooking_status) {
             $prebooking_status->status = '1'; // Mark prebooking as completed
@@ -182,5 +182,24 @@ class RoomBooking extends Controller
     //         ], 404);
     //     }
     // }
+
+    public function checkout_update(Request $request)
+    {
+        $booking = Booking::find($request->id);
+        if ($booking) {
+            $booking->checkout_date_time = $request->checkout_date_time;
+            $booking->save();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Checkout updated',
+                'data' => $booking
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Booking not found'
+            ], 404);
+        }
+    }
 
 }
