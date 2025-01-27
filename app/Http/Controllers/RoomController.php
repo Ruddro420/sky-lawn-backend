@@ -24,6 +24,13 @@ class RoomController extends Controller
     public function room_add(Request $request)
     {
         $data = $request->all();
+
+        $roomNumber = $data['room_number'];
+        
+        $findRoom = Room::where('room_number', $roomNumber)->first();
+
+        if(empty($findRoom)) {
+
         // Create the record
         try {
             $room = Room::create($data);
@@ -40,6 +47,17 @@ class RoomController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Room already Added'
+            
+            ], 303);
+        }
+        
+
+
     }
 
     //delete room

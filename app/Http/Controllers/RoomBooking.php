@@ -126,11 +126,6 @@ class RoomBooking extends Controller
             return response()->json(['error' => 'Failed to create booking', 'message' => $e->getMessage()], 500);
         }
     }
-    
-
-
-
-
 
 
 
