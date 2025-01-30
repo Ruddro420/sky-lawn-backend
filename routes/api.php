@@ -46,7 +46,7 @@ Route::post('/room/update',  [RoomController::class, 'room_update']); // Room up
 //------------------------
 Route::get('/prebook-data', [PreBookingController::class, 'room_prebook']); // Get all prebook data
 Route::post('/prebook/add', [PreBookingController::class, 'prebook_add']);  // Add prebook data
-Route::delete('/prebook/delete/{id}', [PreBookingController::class, 'prebook_delete']); // Delete prebook data
+Route::get('/prebook/delete/{id}', [PreBookingController::class, 'prebook_delete']); // Delete prebook data
 Route::get('/prebook-data/show/{id}', [PreBookingController::class, 'prebook_data']); // Get all prebook data
 
 

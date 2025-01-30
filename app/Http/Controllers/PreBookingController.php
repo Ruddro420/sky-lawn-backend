@@ -12,7 +12,7 @@ class PreBookingController extends Controller
 {
     public function room_prebook()
     {
-        $prebook = PreBooking::orderBy('created_at', 'desc')->get();
+        $prebook = PreBooking::orderBy('id', 'desc')->get();
 
        return response()->json([
             'status' => 'success',
