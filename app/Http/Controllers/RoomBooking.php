@@ -79,6 +79,10 @@ class RoomBooking extends Controller
         $room_status = Room::where('room_number', $room_number)->first();
         $prebooking_status = PreBooking::where('room_number', $room_number)->whereDate('date_time', $checking_date )->first();
     
+        if ($room_status->status == 'booking') {
+            return response()->json(['error' => 'Room is already booked!'], 400);
+        }
+
         if ($prebooking_status) {
             $prebooking_status->status = '1'; // Mark prebooking as completed
             $prebooking_status->save();
