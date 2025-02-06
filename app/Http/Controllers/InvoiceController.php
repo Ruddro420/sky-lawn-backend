@@ -19,6 +19,23 @@ class InvoiceController extends Controller
         ]);
     }
 
+    public  function invoice_data($id)
+    {
+        $invoice = Invoice::find($id);
+        if ($invoice) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Invoice data retrieved successfully.',
+                'data' => $invoice,
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invoice not found!',
+            ], 404);
+        }
+    }
+
     public function invoice_add(Request $request)
     {
         // Validate the input

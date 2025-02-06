@@ -60,6 +60,9 @@ Route::get('/booking-data/show/{id}', [RoomBooking::class, 'booking_data']); // 
 Route::post('/book/checkout/update', [RoomBooking::class, 'checkout_update']); // Get all booking data
 
 
+Route::post('/booking/update/{id}', [RoomBooking::class, 'booking_update']); // Get all booking data not done
+
+
 //------------------------
 //suport routing 
 //------------------------
@@ -91,3 +94,4 @@ Route::post('/invoice/range/report', [ReportController::class, 'invoice_report_r
 Route::get('/invoice', [InvoiceController::class, 'invoice']); // Get all invoice data
 Route::post('/invoice/add', [InvoiceController::class, 'invoice_add']); // Add invoice data
 Route::get('/invoice/delete/{id}', [InvoiceController::class, 'invoice_delete']); // Delete invoice data
+Route::get('/invoice/data/{id}', [InvoiceController::class, 'invoice_data']); // Get all invoice data

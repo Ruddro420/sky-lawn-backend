@@ -28,18 +28,116 @@ class RoomBooking extends Controller
         $data = $request->all();
         $data['user_id'] = Str::random(10); // Generate random user ID
         $data['invoice'] = Str::random(10); // Generate random invoice number
-    
+
         $room_number = $data['room_number'];
         $checking_data = $data['checking_date_time']; // Provided date_time for checking
         $checking_date = Carbon::parse($checking_data)->toDateString(); // Generate checking date
-    
+
         // Check for existing booking conflicts on the same date
         $existing_booking = Booking::where('room_number', $room_number)
             ->whereDate('checking_date_time', $checking_date)
             ->first();
-    
+
         if ($existing_booking) {
             return response()->json(['message' => 'Room is already booked for the specified date!'], 409);
+        }
+
+        // Validate incoming request
+        $validated = $request->validate([
+            'name' => 'nullable|string',
+            'mobile' => 'nullable|string',
+            'fathers_name' => 'nullable|string',
+            'mothers_name' => 'nullable|string',
+            'address' => 'nullable|string',
+            'nationality' => 'nullable|string',
+            'profession' => 'nullable|string',
+            'company' => 'nullable|string',
+            'comming_form' => 'nullable|string',
+            'purpose' => 'nullable|string',
+            'checking_date_time' => 'nullable|string',
+            'checkout_date_time' => 'nullable|string',
+            'room_category' => 'nullable|string',
+            'room_number' => 'nullable|string',
+            'room_price' => 'nullable|string',
+            'person' => 'nullable|string',
+            'duration_day' => 'nullable|string',
+            'total_price' => 'nullable|string',
+            'nid_no' => 'nullable|string',
+            'passport_no' => 'nullable|string',
+            'visa_no' => 'nullable|string',
+            'advance' => 'nullable|string',
+            'payment_status' => 'nullable|string',
+            'payment_method' => 'nullable|string',
+            'check_status' => 'nullable|string',
+            'status' => 'nullable|string',
+            'couple_doc.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'visa_doc.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'other_doc.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'nid_doc.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
+        $room_status = Room::where('room_number', $room_number)->first();
+        $prebooking_status = PreBooking::where('room_number', $room_number)->whereDate('date_time', $checking_date)->first();
+
+        if ($room_status->status == 'booking') {
+            return response()->json(['error' => 'Room is already booked!'], 400);
+        }
+
+        if ($prebooking_status) {
+            $prebooking_status->status = '1'; // Mark prebooking as completed
+            $prebooking_status->save();
+        } else {
+            return response()->json(['error' => 'Prebooking not found!'], 404);// this is not working
+        }
+
+        if ($room_status) {
+            $room_status->status = 'booking'; // Update room status to "booking"
+            $room_status->save();
+        } else {
+            return response()->json(['error' => 'Room not found!'], 404);
+        }
+
+        $documents = ['nid_doc', 'couple_doc', 'visa_doc', 'other_doc'];
+        foreach ($documents as $document) {
+            if ($request->hasFile($document)) {
+                $files = $request->file($document);
+
+                if (!is_array($files)) {
+                    $files = [$files];
+                }
+
+                $filenames = [];
+                foreach ($files as $file) {
+                    $filename = date('Ymdhi') . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                    $file->move(public_path($document . '/doc'), $filename);
+                    $filenames[] = $filename;
+                }
+
+                $validated[$document] = json_encode($filenames);
+            } else {
+                $validated[$document] = null;
+            }
+        }
+
+        // Add user_id and invoice to the validated data
+        $validated['user_id'] = $data['user_id'];
+        $validated['invoice'] = $data['invoice'];
+
+        try {
+            $booking = Booking::create($validated);
+            return response()->json($booking, 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to create booking', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function booking_update(Request $request, $id)
+    {
+        $id =  $request->id;
+        // Find the existing booking
+        $booking = Booking::find($id);
+        if (!$booking) {
+            return response()->json(['error' => 'Booking not found!'], 404);
         }
     
         // Validate incoming request
@@ -76,32 +174,23 @@ class RoomBooking extends Controller
             'nid_doc.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
     
-        $room_status = Room::where('room_number', $room_number)->first();
-        $prebooking_status = PreBooking::where('room_number', $room_number)->whereDate('date_time', $checking_date )->first();
-    
-        if ($room_status->status == 'booking') {
-            return response()->json(['error' => 'Room is already booked!'], 400);
-        }
-
-        if ($prebooking_status) {
-            $prebooking_status->status = '1'; // Mark prebooking as completed
-            $prebooking_status->save();
-        } else {
-            return response()->json(['error' => 'Prebooking not found!'], 404);
-        }
-    
-        if ($room_status) {
-            $room_status->status = 'booking'; // Update room status to "booking"
-            $room_status->save();
-        } else {
-            return response()->json(['error' => 'Room not found!'], 404);
-        }
-    
+        // Handle document updates
         $documents = ['nid_doc', 'couple_doc', 'visa_doc', 'other_doc'];
         foreach ($documents as $document) {
             if ($request->hasFile($document)) {
-                $files = $request->file($document);
+                // Delete old documents if they exist
+                if ($booking->$document) {
+                    $oldFiles = json_decode($booking->$document, true);
+                    foreach ($oldFiles as $oldFile) {
+                        $filePath = public_path($document . '/doc/' . $oldFile);
+                        if (file_exists($filePath)) {
+                            unlink($filePath);
+                        }
+                    }
+                }
     
+                // Upload new documents
+                $files = $request->file($document);
                 if (!is_array($files)) {
                     $files = [$files];
                 }
@@ -115,19 +204,17 @@ class RoomBooking extends Controller
     
                 $validated[$document] = json_encode($filenames);
             } else {
-                $validated[$document] = null;
+                // Retain existing documents if no new files are uploaded
+                $validated[$document] = $booking->$document;
             }
         }
     
-        // Add user_id and invoice to the validated data
-        $validated['user_id'] = $data['user_id'];
-        $validated['invoice'] = $data['invoice'];
-    
+        // Update the booking with validated data
         try {
-            $booking = Booking::create($validated);
-            return response()->json($booking, 201);
+            $booking->update($validated);
+            return response()->json($booking, 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to create booking', 'message' => $e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to update booking', 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -136,10 +223,24 @@ class RoomBooking extends Controller
     public function booking_data($id)
     {
         $booking = Booking::find($id);
+
+        
         if ($booking) {
+            // Parse the dates into Carbon objects and strip the time component
+            $checking_date = Carbon::parse($booking->checking_date_time)->startOfDay();
+            $checkout_date = Carbon::parse($booking->checkout_date_time)->startOfDay();
+            
+            // Calculate the difference in days (including both start and end dates)
+            $daysDifference = $checking_date->diffInDays($checkout_date) + 1;
+
+            $room_number = $booking->room_number;
+            $room = Room::where('room_number', $room_number)->first();
+    
             return response()->json([
                 'status' => 'success',
                 'message' => 'Booking found',
+                'days_difference' => $daysDifference, // Include the calculated days difference
+                'room' => $room,
                 'data' => $booking
             ]);
         } else {
@@ -149,6 +250,7 @@ class RoomBooking extends Controller
             ], 404);
         }
     }
+
 
 
 
@@ -190,12 +292,23 @@ class RoomBooking extends Controller
     public function checkout_update(Request $request)
     {
         $booking = Booking::find($request->id);
+
         if ($booking) {
             $booking->checkout_date_time = $request->checkout_date_time;
             $booking->save();
+
+            // Parse the dates into Carbon objects and strip the time component
+            $checking_date = Carbon::parse($booking->checking_date_time)->startOfDay();
+            $checkout_date = Carbon::parse($booking->checkout_date_time)->startOfDay();
+
+            // Calculate the difference in days (including both start and end dates)
+            $daysDifference = $checking_date->diffInDays($checkout_date) + 1;
+
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Checkout updated',
+                'duration_day' => $daysDifference,
                 'data' => $booking
             ]);
         } else {
@@ -205,5 +318,6 @@ class RoomBooking extends Controller
             ], 404);
         }
     }
+
 
 }

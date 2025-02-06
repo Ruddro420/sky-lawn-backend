@@ -163,7 +163,6 @@ class ReportController extends Controller
         }
 
     }
-
     public function invoice_report_range(Request $request)
     {
         // Validate input
@@ -171,23 +170,22 @@ class ReportController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date',
         ]);
-
+    
         try {
             // Parse dates
             $startDate = Carbon::parse($request->start_date)->startOfDay();
             $endDate = Carbon::parse($request->end_date)->endOfDay();
-
+    
             // Query Invoice records
             $invoices = Invoice::whereBetween('created_at', [$startDate, $endDate])->get();
-
-            // Calculate totals
-            $invoiceCount = $invoices->count();
-            $totalPrice = $invoices->sum('room_price');
-
+    
+            // Ensure room_price is numeric before summing
+            $totalPrice = $invoices->sum(fn ($invoice) => (float) $invoice->room_price);
+    
             return response()->json([
                 'success' => true,
                 'message' => 'Invoice date range report retrieved successfully.',
-                'count' => $invoiceCount,
+                'count' => $invoices->count(),
                 'total_price' => $totalPrice,
                 'data' => $invoices,
             ]);
