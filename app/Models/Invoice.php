@@ -26,10 +26,10 @@ class Invoice extends Model
         'final_amount',
         'payment_status',
         'payment_method',
-        'extra-1',
-        'extra-2',
-        'extra-3',
-        'extra-4',
+        'room_name',
+        'room_type_name',
+        'resturent_cost',
+        'other_cost',
         'extra-5',
     ];
     

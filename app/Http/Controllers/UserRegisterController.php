@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\UserRegister;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UserRegisterController extends Controller
 {
@@ -21,21 +22,30 @@ class UserRegisterController extends Controller
     public function add_user(Request $request)
     {
         try {
-            $validatedData = $request->validate([
+            $validation = Validator::make($request->all(), [
                 'name' => 'required', // Validate as email and check uniqueness
                 'email' => 'required|email|unique:user_registers,email', // Validate as email and check uniqueness
                 'password' => 'required', // Validate as email and check uniqueness
             ]);
-    
-            // Create user record if validation passes
-            $userData = UserRegister::create($validatedData);
-    
+
+            if ($validation->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'status' => 'error',
+                    'message' => $validation->errors(),
+                ], 422); 
+            }
+ 
+            $userData = new UserRegister();
+            $userData->name = $request->name;
+            $userData->email = $request->email;
+            $userData->password = $request->password;
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'User added successfully',
                 'data' => $userData
             ]);
-    
         } catch (\Illuminate\Validation\ValidationException $exception) {
             // Return error response for validation failures
             return response()->json([
@@ -44,7 +54,7 @@ class UserRegisterController extends Controller
             ], 422); // Use 422 Unprocessable Entity for validation errors
         }
     }
-    
+
 
     public function delete_user($id)
     {
@@ -60,7 +70,7 @@ class UserRegisterController extends Controller
     {
         // Fetch the user with the provided email
         $user = UserRegister::where('email', $request->email)->first();
-    
+
         if ($user) {
             // Check if the provided password matches the stored password
             if ($request->password === $user->password) {

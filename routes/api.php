@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Route;
@@ -14,10 +15,12 @@ use App\Http\Controllers\InvoiceController;
 //------------------------
 //User routing
 //------------------------
-Route::get('/user', [UserRegisterController::class, 'user_data']); // user data
-Route::post('/user/add', [UserRegisterController::class, 'add_user']); // add user
-Route::get('/user/delete/{id}', [UserRegisterController::class, 'delete_user']); // delete user
-Route::post('/user/check', [UserRegisterController::class, 'checking_user']); // delete user
+Route::prefix('/user')->controller(UserRegisterController::class)->group(function () {
+    Route::get('/', 'user_data');
+    Route::post('/add',  'add_user');
+    Route::get('/delete/{id}', 'delete_user');
+    Route::post('/check', 'checking_user');
+});
 
 
 //------------------------
@@ -60,7 +63,7 @@ Route::get('/booking-data/show/{id}', [RoomBooking::class, 'booking_data']); // 
 Route::post('/book/checkout/update', [RoomBooking::class, 'checkout_update']); // Get all booking data
 
 
-Route::post('/booking/update/{id}', [RoomBooking::class, 'booking_update']); // Get all booking data not done
+Route::post('/booking/update', [RoomBooking::class, 'booking_update']); // Get all booking data not done
 
 
 //------------------------
