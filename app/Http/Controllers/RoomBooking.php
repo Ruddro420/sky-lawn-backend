@@ -29,18 +29,18 @@ class RoomBooking extends Controller
         $data['user_id'] = Str::random(10); // Generate random user ID
         $data['invoice'] = Str::random(10); // Generate random invoice number
 
-        $room_number = $data['room_number'];
-        $checking_data = $data['checking_date_time']; // Provided date_time for checking
-        $checking_date = Carbon::parse($checking_data)->toDateString(); // Generate checking date
+        // $room_number = $data['room_number'];
+        // $checking_data = $data['checking_date_time']; // Provided date_time for checking
+        // $checking_date = Carbon::parse($checking_data)->toDateString(); // Generate checking date
 
         // Check for existing booking conflicts on the same date
-        $existing_booking = Booking::where('room_number', $room_number)
-            ->whereDate('checking_date_time', $checking_date)
-            ->first();
+        // $existing_booking = Booking::where('room_number', $room_number)
+        //     ->whereDate('checking_date_time', $checking_date)
+        //     ->first();
 
-        if ($existing_booking) {
-            return response()->json(['message' => 'Room is already booked for the specified date!'], 409);
-        }
+        // if ($existing_booking) {
+        //     return response()->json(['message' => 'Room is already booked for the specified date!'], 409);
+        // }
 
         // Validate incoming request
         $validated = $request->validate([
@@ -76,26 +76,26 @@ class RoomBooking extends Controller
             'nid_doc.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        $room_status = Room::where('room_number', $room_number)->first();
-        $prebooking_status = PreBooking::where('room_number', $room_number)->whereDate('date_time', $checking_date)->first();
+        // $room_status = Room::where('room_number', $room_number)->first();
+        // $prebooking_status = PreBooking::where('room_number', $room_number)->whereDate('date_time', $checking_date)->first();
 
-        if ($room_status->status == 'booking') {
-            return response()->json(['error' => 'Room is already booked!'], 400);
-        }
+        // if ($room_status->status == 'booking') {
+        //     return response()->json(['error' => 'Room is already booked!'], 400);
+        // }
 
-        if ($prebooking_status) {
-            $prebooking_status->status = '1'; // Mark prebooking as completed
-            $prebooking_status->save();
-        } else {
-            return response()->json(['error' => 'Prebooking not found!'], 404);// this is not working
-        }
+        // if ($prebooking_status) {
+        //     $prebooking_status->status = '1'; // Mark prebooking as completed
+        //     $prebooking_status->save();
+        // } else {
+        //     return response()->json(['error' => 'Prebooking not found!'], 404);// this is not working
+        // }
 
-        if ($room_status) {
-            $room_status->status = 'booking'; // Update room status to "booking"
-            $room_status->save();
-        } else {
-            return response()->json(['error' => 'Room not found!'], 404);
-        }
+        // if ($room_status) {
+        //     $room_status->status = 'booking'; // Update room status to "booking"
+        //     $room_status->save();
+        // } else {
+        //     return response()->json(['error' => 'Room not found!'], 404);
+        // }
 
         $documents = ['nid_doc', 'couple_doc', 'visa_doc', 'other_doc'];
         foreach ($documents as $document) {
@@ -231,7 +231,7 @@ class RoomBooking extends Controller
             $checkout_date = Carbon::parse($booking->checkout_date_time)->startOfDay();
             
             // Calculate the difference in days (including both start and end dates)
-            $daysDifference = $checking_date->diffInDays($checkout_date) + 1;
+            $daysDifference = $checking_date->diffInDays($checkout_date) ;
 
             $room_number = $booking->room_number;
             $room = Room::where('room_number', $room_number)->first();

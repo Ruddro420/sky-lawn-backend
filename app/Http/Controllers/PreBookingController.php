@@ -31,38 +31,38 @@ class PreBookingController extends Controller
             return response()->json(['error' => 'Invalid data provided!'], 400);
         }
     
-        $room_number = $data['room_number'];
-        $prebook_data = $data['date_time']; // Provided date_time for prebooking
-        $prebook_date = Carbon::parse($prebook_data)->toDateString(); // Extract the date only (format: Y-m-d)
+        // $room_number = $data['room_number'];
+        // $prebook_data = $data['date_time']; // Provided date_time for prebooking
+        // $prebook_date = Carbon::parse($prebook_data)->toDateString(); // Extract the date only (format: Y-m-d)
     
-        // Find the room by room number
-        $room_status = Room::where('room_number', $room_number)->first();
+        // // Find the room by room number
+        // $room_status = Room::where('room_number', $room_number)->first();
     
-        if (!$room_status) {
-            return response()->json(['error' => 'Room not found!'], 404);
-        }
+        // if (!$room_status) {
+        //     return response()->json(['error' => 'Room not found!'], 404);
+        // }
     
-        // Check if the room is already booked or pre-booked
-        if ($room_status->status == 'pre-booked' || $room_status->status == 'booked') {
-            return response()->json([
-                'message' => 'Room is already booked!',
-            ], 400);
-        }
+        // // Check if the room is already booked or pre-booked
+        // if ($room_status->status == 'pre-booked' || $room_status->status == 'booked') {
+        //     return response()->json([
+        //         'message' => 'Room is already booked!',
+        //     ], 400);
+        // }
     
         // Check for existing prebooking conflicts on the same date
-        $existing_prebook = PreBooking::where('room_number', $room_number)
-            ->whereDate('date_time', $prebook_date)
-            ->first();
+        // $existing_prebook = PreBooking::where('room_number', $room_number)
+        //     ->whereDate('date_time', $prebook_date)
+        //     ->first();
     
-        if ($existing_prebook) {
-            return response()->json([
-                'message' => 'Room is already pre-booked for the specified date!',
-            ], 409); // HTTP 409 Conflict
-        }
+        // if ($existing_prebook) {
+        //     return response()->json([
+        //         'message' => 'Room is already pre-booked for the specified date!',
+        //     ], 409); // HTTP 409 Conflict
+        // }
     
-        // Update the room status to 'pre-booking'
-        $room_status->status = 'pre-booking';
-        $room_status->save();
+        // // Update the room status to 'pre-booking'
+        // $room_status->status = 'pre-booking';
+        // $room_status->save();
     
         // Create the prebooking record
         try {
