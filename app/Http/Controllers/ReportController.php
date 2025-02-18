@@ -180,7 +180,7 @@ class ReportController extends Controller
             $invoices = Invoice::whereBetween('created_at', [$startDate, $endDate])->get();
     
             // Ensure room_price is numeric before summing
-            $totalPrice = $invoices->sum(fn ($invoice) => (float) $invoice->room_price);
+            $totalPrice = $invoices->sum(fn ($invoice) => (float) $invoice->final_amount);
     
             return response()->json([
                 'success' => true,

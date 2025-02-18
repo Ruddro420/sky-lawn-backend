@@ -32,10 +32,10 @@ return new class extends Migration
             $table->string('final_amount')->nullable();
             $table->string('payment_status')->nullable();
             $table->string('payment_method')->nullable();
-            $table->string('extra-1')->nullable();
-            $table->string('extra-2')->nullable();
-            $table->string('extra-3')->nullable();
-            $table->string('extra-4')->nullable();
+            $table->string('room_name')->nullable();
+            $table->string('room_type_name')->nullable();
+            $table->string('resturent_cost')->nullable();
+            $table->string('other_cost')->nullable();
             $table->string('extra-5')->nullable();
             $table->timestamps();
         });
